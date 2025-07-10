@@ -19,8 +19,8 @@ def load_data(ticker):
 df = load_data(ticker)
 
 # --- 기술 지표 계산 ---
-df['EMA5'] = ta.trend.ema_indicator(df['Close'], window=5).ema_indicator()
-df['EMA20'] = ta.trend.ema_indicator(df['Close'], window=20).ema_indicator()
+df['EMA5'] = ta.trend.ema_indicator(df['Close'], window=5).
+df['EMA20'] = ta.trend.ema_indicator(df['Close'], window=20).
 df['RSI'] = ta.momentum.RSIIndicator(df['Close']).rsi()
 macd = ta.trend.MACD(df['Close'])
 df['MACD'] = macd.macd()
