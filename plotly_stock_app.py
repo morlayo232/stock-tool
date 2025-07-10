@@ -3,24 +3,31 @@ import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
 import ta
+from datetime import date
 
 # --- 사이드바: 종목 입력 ---
 st.sidebar.markdown("📌 **종목 선택**")
 ticker = st.sidebar.text_input("티커 입력 (예: 삼성전자 → 005930.KS)", "005930.KS")
 
-# --- 종목 데이터 로딩 ---
+# --- 데이터 로딩 (매일 자동 갱신) ---
 @st.cache_data
-def load_data(ticker):
+def load_data(ticker, day_key):
     stock = yf.Ticker(ticker)
     df = stock.history(period="6mo")
     df.reset_index(inplace=True)
     return df
 
-df = load_data(ticker)
+today = date.today().isoformat()
+df = load_data(ticker, today)
+
+# --- 예외 처리 ---
+if df.empty:
+    st.error("❌ 데이터를 불러올 수 없습니다. 티커를 확인해주세요.")
+    st.stop()
 
 # --- 기술 지표 계산 ---
-df['EMA5'] = ta.trend.ema_indicator(df['Close'], window=5).
-df['EMA20'] = ta.trend.ema_indicator(df['Close'], window=20).
+df['EMA5'] = ta.trend.EMAIndicator(df['Close'], window=5).ema_indicator()
+df['EMA20'] = ta.trend.EMAIndicator(df['Close'], window=20).ema_indicator()
 df['RSI'] = ta.momentum.RSIIndicator(df['Close']).rsi()
 macd = ta.trend.MACD(df['Close'])
 df['MACD'] = macd.macd()
@@ -74,4 +81,3 @@ with st.sidebar.expander("📖 기술 지표 설명 보기"):
 - **MACD**: 추세 전환 지표 (MACD > Signal 이면 상승 추세로 판단)  
 - **EMA**: 최근 가격에 가중치를 둔 이동 평균  
     """)
-
