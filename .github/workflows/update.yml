@@ -2,16 +2,12 @@ name: Update Stock DB Daily
 
 on:
   schedule:
-    - cron: '0 23 * * *'  # 매일 한국시간 오전 8시에 실행 (UTC 기준 23시)
-  workflow_dispatch:       # GitHub에서 수동 실행도 가능
-
-permissions:
-  contents: write  # git push를 위한 권한
+    - cron: '0 23 * * *'  # 한국시간 오전 8시
+  workflow_dispatch:       # 수동 실행도 가능
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
@@ -34,5 +30,5 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add filtered_stocks.csv
-        git commit -m "📈 자동 업데이트: filtered_stocks.csv" || echo "No changes to commit"
+        git commit -m \"📈 자동 업데이트: filtered_stocks.csv\"
         git push
